@@ -67,7 +67,7 @@ export default function PokemonList({ pokemons }: PokemonListProps) {
         {pokemonsFiltered.map((pokemon) => (
           <Link
             key={pokemon.pokedexId}
-            href={`/pokemon/${pokemon.name.fr.toLowerCase()}`}
+            href={`/pokemon/${pokemon.pokedexId}-${pokemon.name.fr.toLowerCase()}`}
             className="flex"
           >
             <PokemonCard pokemon={pokemon} />
