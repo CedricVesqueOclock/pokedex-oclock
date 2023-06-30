@@ -2,11 +2,8 @@
 // on peut rendre notre Server component asynchrone
 // > https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#async-and-await-in-server-components
 
-import Link from 'next/link';
-
-import PokemonCard from '@/components/PokemonCard';
-
 import { Pokemon } from '@/@types/pokemon';
+import PokemonList from '@/components/PokemonList';
 
 async function getPokemons() {
   const res = await fetch('https://api-pokemon-fr.vercel.app/api/v1/pokemon');
@@ -27,23 +24,12 @@ export default async function Home() {
   // on est dans un Server Component, le console.log
   // affiche les données dans le Terminal !!!
   // console.log(data);
-  const pokemonsFiltered = pokemons.slice(0, 12);
 
   return (
-    <main className="bg-cyan-950 min-h-screen">
+    <main className="bg-cyan-950 min-h-screen pb-12 overflow-hidden">
       <h1 className="font-bold text-cyan-400 text-4xl p-12">Pokédex</h1>
 
-      <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2 p-2">
-        {pokemonsFiltered.map((pokemon) => (
-          <Link
-            key={pokemon.pokedexId}
-            href={`/pokemon/${pokemon.name.fr.toLowerCase()}`}
-            className="flex"
-          >
-            <PokemonCard pokemon={pokemon} />
-          </Link>
-        ))}
-      </section>
+      <PokemonList pokemons={pokemons} />
     </main>
   );
 }
