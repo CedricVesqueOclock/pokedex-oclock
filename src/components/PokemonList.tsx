@@ -2,8 +2,9 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import PokemonCard from '@/components/PokemonCard';
 import { Pokemon } from '@/@types/pokemon';
@@ -13,17 +14,32 @@ interface PokemonListProps {
 }
 
 export default function PokemonList({ pokemons }: PokemonListProps) {
-  const [page, setPage] = useState(0);
-  const [perPage, setPerPage] = useState(20);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // 1ère page 0 — 12
-  // 2ème page 12 — 24
-  // 3ème page 24 — 36
+  // je détermine mes valeurs initiales depuis mon URL
+  // si l'info n'est pas dans l'URL, je mets des valeurs par défaut
+  const defaultValue = {
+    page: searchParams.get('page') || 0,
+    perPage: searchParams.get('perPage') || 20,
+  };
+
+  const [page, setPage] = useState(Number(defaultValue.page));
+  const [perPage, setPerPage] = useState(Number(defaultValue.perPage));
 
   const start = page * perPage;
   const end = start + perPage;
 
   const pokemonsFiltered = pokemons.slice(start, end);
+
+  useEffect(() => {
+    const url = page === defaultValue.page && perPage === defaultValue.perPage
+      ? `${pathname}`
+      : `${pathname}?page=${page}&perPage=${perPage}`;
+
+    router.push(url);
+  }, [defaultValue.page, defaultValue.perPage, page, pathname, perPage, router]);
 
   return (
     <>
@@ -53,7 +69,7 @@ export default function PokemonList({ pokemons }: PokemonListProps) {
 
         <div>
           <span className="text-slate-300">Afficher </span>
-          <select className="text-slate-950" onChange={(e) => setPerPage(Number(e.target.value))} value={perPage}>
+          <select className="text-slate-700" onChange={(e) => setPerPage(Number(e.target.value))} value={perPage}>
             <option value="20">20</option>
             <option value="50">50</option>
             <option value="100">100</option>
@@ -62,7 +78,7 @@ export default function PokemonList({ pokemons }: PokemonListProps) {
           <span className="text-slate-300"> Pokemons par page</span>
         </div>
       </div>
-      
+
       <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2 p-2">
         {pokemonsFiltered.map((pokemon) => (
           <Link

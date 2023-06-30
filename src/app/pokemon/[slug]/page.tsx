@@ -1,5 +1,5 @@
 import { Pokemon } from '@/@types/pokemon';
-import Link from 'next/link';
+import PreviousPage from '@/components/PreviousPage';
 
 interface SingleProps {
   params: {
@@ -8,7 +8,7 @@ interface SingleProps {
 }
 
 async function getPokemon(id: string) {
-  const res = await fetch(`https://api-pokemon-fr.vercel.app/api/v1/pokemon/${id}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pokemon/${id}`);
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
@@ -37,7 +37,7 @@ export default async function Single({ params }: SingleProps) {
         {pokemon.name.fr}
       </h1>
 
-      <Link href="/" className="text-cyan-300">← Accueil</Link>
+      <PreviousPage />
 
       <img
         src={pokemon.sprites.shiny || pokemon.sprites.regular}
